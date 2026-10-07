@@ -3,6 +3,7 @@
 ## 1. System Overview & Core Objectives
 
 ### 1.1 Objective
+
 Build an autonomous, zero-model-training verification pipeline and Streamlit dashboard that ingests physical scrap video clips (10-second inspection clips), extracts frames at 1-second intervals (1 FPS, 10 samples total), classifies each frame using pre-trained zero-shot vision intelligence, and synthesizes an intake decision via **Majority Voting with Policy Explainability & Prediction Transparency**.
 
 ### 1.2 Pipeline Architecture
@@ -82,7 +83,8 @@ The decision engine applies an automated policy to translate temporal prediction
 | **Confidence Margin ($\Delta$)** | $> +40\%$ over runner-up | High classification certainty; distinct alloy signature. |
 | **Contamination Exposure** | $\le 20\%$ | Transient noise allowed without disqualifying the lot. |
 
-### Commercial Actions Output:
+### Commercial Actions Output
+
 - **`STRONG MATCH` (Low Risk):** Auto-approves the lot for instant B2B marketplace listing at standard index pricing.
 - **`MODERATE MATCH` (Moderate Risk):** Holds for conditional verification, flags a 5-10% contamination deduction, or requests weighbridge scale slips.
 - **`INCONCLUSIVE` (High Risk):** Rejects automated intake and routes to a certified yard inspector for manual physical sorting.
