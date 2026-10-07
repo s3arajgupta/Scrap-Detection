@@ -3,7 +3,7 @@
 ## 1. System Overview & Core Objectives
 
 ### 1.1 Objective
-Build an autonomous, zero-model-training verification pipeline and Streamlit dashboard that ingests physical scrap video clips (10-second inspection clips), extracts frames at 1-second intervals (1 FPS, 10 samples total), classifies each frame using pre-trained zero-shot vision intelligence, and synthesizes an aggregate intake decision via **Majority Voting**.
+Build an autonomous, zero-model-training verification pipeline and Streamlit dashboard that ingests physical scrap video clips (10-second inspection clips), extracts frames at 1-second intervals (1 FPS, 10 samples total), classifies each frame using pre-trained zero-shot vision intelligence, and synthesizes an intake decision via **Majority Voting with Policy Explainability & Prediction Transparency**.
 
 ### 1.2 Pipeline Architecture
 
@@ -15,7 +15,7 @@ Build an autonomous, zero-model-training verification pipeline and Streamlit das
                                       │
                    [ Pre-trained Zero-Shot Classifier ]
                       (CLIP ViT / Calibrated Engine)
-               Scores each frame against canonical scrap classes:
+               Scores each frame & extracts visual feature cues:
             • Copper scrap            • Aluminum scrap
             • Steel/Iron scrap        • Brass scrap
             • Electronic waste        • Plastic/Debris contamination
@@ -24,14 +24,16 @@ Build an autonomous, zero-model-training verification pipeline and Streamlit das
                         [ Majority Voting Engine ]
                • Identifies Dominant Material across 10 samples
                • Calculates Persistence Ratio (e.g. 8/10s = 80%)
-               • Computes Mean Confidence & Decision Badge
-               • Aggregates Top-5 Probability Distribution
+               • Computes Longest Consecutive Stability Run
+               • Evaluates Risk Rating & Marketplace Action
+               • Synthesizes Policy Rationale & Runner-up Margins
                                       │
                                       ▼
              [ Streamlit Temporal Verification UI Dashboard ]
-               • Row 1: Video Player & Majority Voting Decision
-               • Row 2: 10 Dedicated Sample Boxes (with Frame Thumbnails)
-               • Row 3: Trajectory Chart & Semantic Dissonance Diagnostic
+               • Row 1: Video Player & Decision Transparency Card
+               • Row 2: 10 Dedicated Sample Boxes (Thumbnails + Margin Δ)
+               • Row 3: Interactive Frame-by-Frame Explainability Inspector
+               • Row 4: Trajectory Chart, Dissonance Report & Audit Log
 ```
 
 ---
@@ -40,41 +42,57 @@ Build an autonomous, zero-model-training verification pipeline and Streamlit das
 
 ```
 +------------------------------------+-----------------------------------------------------+
-|                                    | DECISION (Majority Voting)                          |
-|                                    | [ STRONG MATCH ] (80% persistence)                  |
+|                                    | DECISION & TRANSPARENCY POLICY                      |
+|                                    | [ STRONG MATCH ] [Rating: LOW RISK] (80% persistence)
 |                                    | Dominant Material: Copper scrap                     |
-|        [ VIDEO PLAYER ]            | Temporal Agreement: 8 / 10 seconds | Mean: 0.89     |
-|        input_clip.mp4 (10 s)       | [▼ Top-5 Probability Drawer]                        |
-|                                    +-----------------------------------------------------+
-+------------------------------------------------------------------------------------------+
+|        [ VIDEO PLAYER ]            | Agreement: 8/10s | Max Run: 5s continuous | Mean: 0.89
+|        input_clip.mp4 (10 s)       | ⚡ Marketplace Action: Auto-Approve Lot for trading  |
+|                                    | [🛡️ Decision Rationale & Policy Breakdown]          |
+|                                    | [▼ Top-5 Probability Distribution]                  |
++------------------------------------+-----------------------------------------------------+
 | PER-SECOND EVIDENCE (10-Second Temporal Localization — 1 Box per Sample)                 |
 |   0s          1s          2s          3s          4s          5s     ...     9s          |
 | [THUMB]     [THUMB]     [THUMB]     [THUMB]     [THUMB]     [THUMB]        [THUMB]       |
 | Copper      Copper      Copper      Debris      Debris      Copper         Copper        |
 |   92%         94%         89%         65%         68%         91%            90%         |
+|  Δ +86%      Δ +88%      Δ +81%      Δ +43%      Δ +46%      Δ +84%         Δ +85%       |
++------------------------------------------------------------------------------------------+
+| 🔬 FRAME-BY-FRAME EXPLAINABILITY & VISUAL EVIDENCE INSPECTOR (Expandable Panel)          |
+| * Selectable frame slider (0s - 9s)                                                      |
+| * Primary Prediction vs. Runner-Up Hypothesis with confidence margin delta               |
+| * Specific visual evidence drivers (chrominance, luster, texture striations, etc.)      |
 +------------------------------------------------------------------------------------------+
 | EXPLAINABILITY & COUNTERFACTUAL DIAGNOSTICS (Expandable Panel)                           |
 | * Second-by-Second Confidence Trajectory Line Chart (Dominant Material vs 0.75 Baseline) |
 | * Semantic Dissonance Diagnostic (Edge Case & Transient Drop Explanations)               |
+| * 📊 Temporal Audit Trail & Frame-by-Frame Transparency Log (Data Table)                 |
 +------------------------------------------------------------------------------------------+
 ```
 
-### Component Details:
-| Section | Component | Functionality |
+---
+
+## 3. Decision Transparency & Policy Rules
+
+The decision engine applies an automated policy to translate temporal predictions into commercial trading outcomes:
+
+| Metric | Rule Threshold | Policy Meaning |
 | :--- | :--- | :--- |
-| **Top** | Main Video Uploader (`st.file_uploader`) | Accepts `.mp4`, `.mov`, `.avi` inspection clips directly on the main page. |
-| **Row 1 (Left)** | Video Player (`st.video`) | Displays uploaded clip with native playback and scrubber. |
-| **Row 1 (Right)** | Majority Voting Decision Panel | Displays Dominant Material, Decision Badge (`STRONG MATCH` $\ge 70\%$, `MODERATE MATCH` $\ge 50\%$, `INCONCLUSIVE`), Persistence Ratio, Mean Confidence, and collapsible Top-5 distribution drawer. |
-| **Row 2** | 10 Sample Evidence Boxes | 10 individual cards (seconds $0\text{s} - 9\text{s}$). Each card renders: (1) timestamp header, (2) extracted frame thumbnail, (3) predicted scrap class, (4) confidence score, and (5) green indicator for dominant agreement or amber for divergent/contaminated frames. |
-| **Row 3** | Confidence Trajectory Chart | Altair line chart plotting second-by-second confidence against a 0.75 decision threshold baseline (`width="stretch"`). |
-| **Row 3** | Semantic Dissonance Diagnostic | Natural language explanation identifying anomalous frames (e.g., operator glove occlusion, specular reflection, or foreign debris). |
+| **Temporal Persistence** | $\ge 80\%$ | High lot purity; uniform scrap lot. |
+| **Longest Consecutive Run** | $\ge 4\text{s}$ uninterrupted | Guarantees temporal stability; filters out jitter. |
+| **Confidence Margin ($\Delta$)** | $> +40\%$ over runner-up | High classification certainty; distinct alloy signature. |
+| **Contamination Exposure** | $\le 20\%$ | Transient noise allowed without disqualifying the lot. |
+
+### Commercial Actions Output:
+- **`STRONG MATCH` (Low Risk):** Auto-approves the lot for instant B2B marketplace listing at standard index pricing.
+- **`MODERATE MATCH` (Moderate Risk):** Holds for conditional verification, flags a 5-10% contamination deduction, or requests weighbridge scale slips.
+- **`INCONCLUSIVE` (High Risk):** Rejects automated intake and routes to a certified yard inspector for manual physical sorting.
 
 ---
 
-## 3. Data Schema & State Contracts (Pydantic Models)
+## 4. Data Schemas (Pydantic Models)
 
 ```python
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import List, Dict
 
 class PerSecondSample(BaseModel):
@@ -82,19 +100,29 @@ class PerSecondSample(BaseModel):
     predicted_class: str
     confidence: float
     is_dominant_match: bool
+    runner_up_class: str
+    runner_up_confidence: float
+    confidence_margin: float
+    visual_evidence_cues: List[str]
     top_probabilities: Dict[str, float]
 
 class MajorityVoteDecision(BaseModel):
     dominant_material: str
-    persistence_ratio: str            # e.g., "8 / 10 seconds"
-    persistence_percentage: float     # e.g., 80.0
+    persistence_ratio: str
+    persistence_percentage: float
+    longest_consecutive_run: int
+    contamination_rate: float
     avg_confidence: float
-    decision_badge: str               # "STRONG MATCH", "MODERATE MATCH", "INCONCLUSIVE"
+    decision_badge: str
+    risk_rating: str
+    marketplace_action: str
+    decision_rationale: List[str]
     top_5_aggregate: Dict[str, float]
 
 class DiagnosticReport(BaseModel):
     trajectory: List[float]
     dissonance_explanation: str
+    transparency_summary: str
 
 class VerificationResult(BaseModel):
     video_filename: str
@@ -105,35 +133,7 @@ class VerificationResult(BaseModel):
 
 ---
 
-## 4. Zero-Training Classification Engine
-
-To avoid model training and data annotation, the classification pipeline uses a **two-tier zero-shot approach**:
-
-1. **Tier 1: Pre-Trained Zero-Shot Vision Transformer (Hugging Face / CLIP)**
-   - Model: `openai/clip-vit-base-patch32` or `google/siglip-base-patch16-224`.
-   - Ingests each frame and computes text-image cosine similarities against candidate scrap classes without fine-tuning.
-
-2. **Tier 2: Calibrated Visual Feature Fallback**
-   - High-speed visual colorimetry and texture heuristics (calibrated to Copper [red-orange], Brass [yellow-gold], Aluminum [bright silver], Steel [dark gray/oxide], E-waste [green/multi-color], Debris [mixed low-saturation]).
-   - Guarantees immediate zero-latency evaluation even when offline or during initial model loading.
-
----
-
-## 5. File Structure & Responsibilities
-
-```
-e:\GitHub\Maleo\
-├── .venv/                      # Isolated Python 3.14 virtual environment
-├── requirements.txt            # Streamlit, Transformers, Ultralytics, OpenCV, Altair, etc.
-├── app.py                      # Main Streamlit dashboard (Majority voting UI & 10-box grid)
-├── verifier_engine.py          # Zero-shot classification, majority voting, & diagnostics
-├── video_processor.py          # OpenCV 1 FPS frame extraction utility
-└── IMPLEMENTATION_DOSSIER.md   # This architecture and design document
-```
-
----
-
-## 6. Execution Instructions
+## 5. Execution Instructions
 
 Launch the dashboard from your virtual environment:
 
